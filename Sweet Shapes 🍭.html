@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sweet Shapes 🍭</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg1:#ffe3f1;--bg2:#fff4c9;--card:#fff;--ink:#5a2a58;--pink:#ff6fa5;--mint:#5fd3b3;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg1:#3a1740;--bg2:#2b1a3d;--card:#552a5c;--ink:#fff}}
+:root[data-theme="dark"]{--bg1:#3a1740;--bg2:#2b1a3d;--card:#552a5c;--ink:#fff}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%}
+body{font-family:"Baloo 2","Comic Sans MS",system-ui,sans-serif;color:var(--ink);background:linear-gradient(160deg,var(--bg1),var(--bg2));min-height:100vh;overflow-x:hidden}
+.fl{position:fixed;font-size:34px;opacity:.5;animation:fl 7s ease-in-out infinite;pointer-events:none;z-index:0}
+@keyframes fl{50%{transform:translateY(-18px) rotate(12deg)}}
+#app{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:12px 14px 24px;text-align:center}
+header{display:flex;justify-content:space-between;align-items:center}
+h1{margin:4px 0;font-size:34px;color:var(--pink);text-shadow:2px 2px 0 #fff8}
+h2{margin:6px 0 10px;font-size:26px}
+#sc{background:var(--card);border-radius:20px;padding:4px 14px;font-weight:800;box-shadow:0 3px 0 #0002}
+.menu{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.big{border:0;border-radius:26px;padding:18px 8px;font:800 20px "Baloo 2",system-ui,sans-serif;color:#fff;box-shadow:0 6px 0 #0003;cursor:pointer}
+.big:active{transform:translateY(4px);box-shadow:0 2px 0 #0003}
+.big i{display:block;font-style:normal;font-size:44px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.card{background:var(--card);border:4px solid #fff;border-radius:24px;padding:8px;font:800 20px "Baloo 2",system-ui,sans-serif;color:var(--ink);box-shadow:0 5px 0 #0002;cursor:pointer}
+.card svg{width:100%;max-width:100px}
+.card b{display:block}
+.pop{animation:pop .5s}
+@keyframes pop{40%{transform:scale(1.18) rotate(-4deg)}}
+.shake{animation:sh .4s}
+@keyframes sh{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.bk{margin-top:16px;border:0;border-radius:18px;padding:8px 22px;background:var(--card);color:var(--ink);font:800 18px "Baloo 2",system-ui,sans-serif;box-shadow:0 4px 0 #0002;cursor:pointer}
+.slots,.tray{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:8px 0}
+.slot{background:var(--card);border:4px dashed #ff9ec7;border-radius:22px;padding:6px;font-weight:800;min-height:116px}
+.slot.done{border:4px solid var(--mint)}
+.slot svg,.piece svg{width:100%;max-width:76px;display:block;margin:auto}
+.cell{height:92px;display:flex;justify-content:center;align-items:center}
+.piece{width:80px;touch-action:none;cursor:grab;z-index:5}
+.piece.drag{cursor:grabbing;z-index:50;transform:scale(1.15);filter:drop-shadow(0 8px 6px #0004)}
+#mb{position:relative;display:flex;justify-content:space-between;padding:0 6px}
+#mb svg.ln{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.col{display:flex;flex-direction:column;gap:10px;z-index:2}
+.L,.R{background:var(--card);border:4px solid #fff;border-radius:20px;width:112px;height:76px;display:flex;align-items:center;justify-content:center;font:800 20px "Baloo 2",system-ui,sans-serif;color:var(--ink);box-shadow:0 4px 0 #0002;cursor:pointer;padding:0}
+.L svg{width:58px}
+.L.sel{border-color:var(--pink);transform:scale(1.07)}
+.L.ok,.R.ok{border-color:var(--mint);opacity:.85}
+.opts{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:14px 0}
+.opts .card{width:30%;min-width:96px}
+.say{border:0;border-radius:50px;padding:10px 22px;background:var(--mint);color:#fff;font:800 20px "Baloo 2",system-ui,sans-serif;box-shadow:0 4px 0 #0003;cursor:pointer}
+.dot{width:46px;height:46px;border-radius:50%;border:4px solid #fff;box-shadow:0 3px 0 #0003;cursor:pointer;padding:0}
+.dot.sel{transform:scale(1.25);border-color:var(--ink)}
+#win{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;z-index:99}
+#win div{background:var(--card);border-radius:30px;padding:26px 30px;font-size:26px;font-weight:800;max-width:84%}
+#win b{display:block;font-size:56px}
+footer{margin-top:22px;font-size:14px;opacity:.85}
+</style>
+</head>
+<body>
+<span class="fl" style="left:4%;top:12%">🍭</span><span class="fl" style="right:5%;top:22%;animation-delay:1s">🍬</span><span class="fl" style="left:8%;bottom:14%;animation-delay:2s">🧁</span><span class="fl" style="right:7%;bottom:10%;animation-delay:3s">🍩</span>
+<div id="app">
+<header><span></span><h1>🍭 Sweet Shapes 🍭</h1><div id="sc">⭐ 0</div></header>
+<main id="m"></main>
+<footer>Khawlah Bint Thalabah (5-9)<br>Created by T.Badria Alfalahi</footer>
+</div>
+<div id="win"><div><b>🎉</b><span id="wt">Great job!</span><br><button class="bk" id="wb">OK</button></div></div>
+<script>
+const S=[{n:"square",c:"#ff6fa5"},{n:"triangle",c:"#ffa63d"},{n:"rectangle",c:"#38b6f0"},{n:"oval",c:"#a77bff"},{n:"heart",c:"#ff4b5c"},{n:"star",c:"#ffcf33"}];
+const P={square:'<rect x="16" y="16" width="68" height="68" rx="8"/>',triangle:'<polygon points="50,12 90,86 10,86" stroke-linejoin="round"/>',rectangle:'<rect x="6" y="28" width="88" height="44" rx="7"/>',oval:'<ellipse cx="50" cy="50" rx="43" ry="28"/>',heart:'<path d="M50 88C10 58 6 30 28 22c12-4 20 4 22 10 2-6 10-14 22-10 22 8 18 36-22 66z"/>',star:'<polygon points="50,7 61,38 94,38 67,58 77,91 50,71 23,91 33,58 6,38 39,38" stroke-linejoin="round"/>'};
+const $=s=>document.querySelector(s),M=$("#m");
+let stars=0,AC;
+const art=n=>n=="oval"?"an":"a";
+const mix=a=>[...a].sort(()=>Math.random()-.5);
+const col=n=>S.find(s=>s.n==n).c;
+function sh(n,fill,out){return `<svg viewBox="0 0 100 100" fill="${out?"none":fill}" stroke="${out?"#ff9ec7":"#fff"}" stroke-width="${out?4:5}" ${out?'stroke-dasharray="7 6"':""}>${P[n]}</svg>`}
+let V=null;
+function pick(){try{const v=speechSynthesis.getVoices();V=v.find(x=>/^en[-_]US/i.test(x.lang))||v.find(x=>/^en/i.test(x.lang))||null}catch(e){}}
+try{pick();speechSynthesis.onvoiceschanged=pick}catch(e){}
+function say(t){try{const s=speechSynthesis;s.cancel();const u=new SpeechSynthesisUtterance(t);u.lang=V?V.lang:"en-US";if(V)u.voice=V;u.rate=.8;u.pitch=1.1;u.volume=1;setTimeout(()=>{s.resume();s.speak(u)},80)}catch(e){}}
+function unlock(){try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();AC.resume();const b=AC.createBuffer(1,1,22050),o=AC.createBufferSource();o.buffer=b;o.connect(AC.destination);o.start(0)}catch(e){}try{const u=new SpeechSynthesisUtterance(" ");u.volume=0;speechSynthesis.speak(u)}catch(e){}}
+function beep(ok){try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();AC.resume();(ok?[660,880,1100]:[220]).forEach((f,i)=>{const o=AC.createOscillator(),g=AC.createGain();o.frequency.value=f;o.type="triangle";o.connect(g);g.connect(AC.destination);const t=AC.currentTime+i*.12;g.gain.setValueAtTime(.15,t);g.gain.exponentialRampToValueAtTime(.001,t+.2);o.start(t);o.stop(t+.22)})}catch(e){}}
+function good(n){beep(1);setTimeout(()=>say(n),250)}
+function win(){stars++;$("#sc").textContent="⭐ "+stars;beep(1);say("Great job! You are a shape star!");$("#win").style.display="flex"}
+$("#wb").onclick=()=>{$("#win").style.display="none";menu()};
+const back=()=>`<button class="bk" onclick="menu()">🏠 Home</button>`;
+
+function menu(){
+ M.innerHTML=`<h2>Let’s play!</h2><div class="menu">
+ <button class="big" style="background:#ff6fa5" onclick="learn()"><i>👀</i>Learn</button>
+ <button class="big" style="background:#38b6f0" onclick="drag()"><i>🖐️</i>Drag &amp; Drop</button>
+ <button class="big" style="background:#a77bff" onclick="match()"><i>🔗</i>Match</button>
+ <button class="big" style="background:#ffa63d" onclick="listen()"><i>👂</i>Listen &amp; Pick</button>
+ <button class="big" style="background:#5fd3b3" onclick="paint()"><i>🎨</i>Coloring</button>
+ <button class="big" style="background:#ff7a7a" onclick="oddOne()"><i>🔍</i>Odd One Out</button>
+ <button class="big" style="background:#7a8cff;grid-column:1/-1" onclick="hunt()"><i>🕵️</i>Find the Shape</button></div>`;
+ say("Let’s play with shapes!");
+}
+
+function learn(){
+ M.innerHTML=`<h2>Tap a shape!</h2><div class="grid">${S.map(s=>`<button class="card" data-n="${s.n}">${sh(s.n,s.c)}<b>${s.n}</b>🔊</button>`).join("")}</div><br><button class="say" id="all">🔊 Hear all</button><br>${back()}`;
+ M.querySelectorAll(".card").forEach(b=>b.onclick=()=>{const n=b.dataset.n;b.classList.remove("pop");void b.offsetWidth;b.classList.add("pop");say(`${n}. This is ${art(n)} ${n}.`)});
+ $("#all").onclick=()=>say(S.map(s=>s.n).join(". "));
+ say("Tap a shape!");
+}
+
+function drag(){
+ let left=6;
+ M.innerHTML=`<h2>Drag the shape to its place!</h2><div class="slots">${mix(S).map(s=>`<div class="slot" data-n="${s.n}">${sh(s.n,0,1)}${s.n}</div>`).join("")}</div><div class="tray">${mix(S).map(s=>`<div class="cell"><div class="piece" data-n="${s.n}">${sh(s.n,s.c)}</div></div>`).join("")}</div>${back()}`;
+ M.querySelectorAll(".piece").forEach(p=>{
+  let ox,oy;
+  p.onpointerdown=e=>{e.preventDefault();p.setPointerCapture(e.pointerId);const r=p.getBoundingClientRect();ox=e.clientX-r.left;oy=e.clientY-r.top;p.style.position="fixed";p.style.left=r.left+"px";p.style.top=r.top+"px";p.classList.add("drag");say(p.dataset.n)};
+  p.onpointermove=e=>{if(!p.classList.contains("drag"))return;p.style.left=e.clientX-ox+"px";p.style.top=e.clientY-oy+"px"};
+  p.onpointerup=e=>{
+   if(!p.classList.contains("drag"))return;
+   p.classList.remove("drag");p.hidden=true;
+   const el=document.elementFromPoint(e.clientX,e.clientY),sl=el&&el.closest(".slot");p.hidden=false;
+   const n=p.dataset.n;
+   if(sl&&sl.dataset.n==n&&!sl.classList.contains("done")){
+    sl.classList.add("done");sl.innerHTML=sh(n,col(n))+n;sl.classList.add("pop");p.parentNode.remove();good(n);
+    if(--left==0)setTimeout(win,700);
+   }else{p.style.position="";p.style.left="";p.style.top="";p.parentNode.classList.add("shake");setTimeout(()=>p.parentNode.classList.remove("shake"),400);beep(0)}
+  };
+ });
+ say("Drag each shape to its place!");
+}
+
+function match(){
+ let sel=null,left=6;
+ M.innerHTML=`<h2>Match the shape with its word!</h2><div id="mb"><svg class="ln" id="ln"></svg><div class="col">${mix(S).map(s=>`<button class="L" data-n="${s.n}">${sh(s.n,s.c)}</button>`).join("")}</div><div class="col">${mix(S).map(s=>`<button class="R" data-n="${s.n}">${s.n}</button>`).join("")}</div></div>${back()}`;
+ const mb=$("#mb"),ln=$("#ln");
+ M.querySelectorAll(".L").forEach(l=>l.onclick=()=>{if(l.classList.contains("ok"))return;M.querySelectorAll(".L").forEach(x=>x.classList.remove("sel"));l.classList.add("sel");sel=l;say(l.dataset.n)});
+ M.querySelectorAll(".R").forEach(r=>r.onclick=()=>{
+  if(r.classList.contains("ok"))return;
+  if(!sel){say(r.dataset.n);return}
+  if(sel.dataset.n==r.dataset.n){
+   const b=mb.getBoundingClientRect(),a=sel.getBoundingClientRect(),c=r.getBoundingClientRect(),n=r.dataset.n;
+   ln.insertAdjacentHTML("beforeend",`<line x1="${a.right-b.left}" y1="${a.top+a.height/2-b.top}" x2="${c.left-b.left}" y2="${c.top+c.height/2-b.top}" stroke="${col(n)}" stroke-width="8" stroke-linecap="round"/>`);
+   sel.classList.remove("sel");sel.classList.add("ok");r.classList.add("ok");sel=null;good(n);
+   if(--left==0)setTimeout(win,800);
+  }else{sel.classList.add("shake");setTimeout(()=>sel&&sel.classList.remove("shake"),400);beep(0);say("Try again!")}
+ });
+ say("Tap a shape, then tap its word!");
+}
+
+function listen(){
+ const q=mix(S);let i=0;
+ function round(){
+  if(i==6){win();return}
+  const t=q[i].n,o=mix([q[i],...mix(S.filter(s=>s.n!=t)).slice(0,2)]);
+  M.innerHTML=`<h2>Round ${i+1} of 6</h2><button class="say" id="h">🔊 Find the ${t}!</button><div class="opts">${o.map(s=>`<button class="card" data-n="${s.n}">${sh(s.n,s.c)}</button>`).join("")}</div>${back()}`;
+  $("#h").onclick=()=>say(`Find the ${t}!`);
+  M.querySelectorAll(".card").forEach(b=>b.onclick=()=>{
+   if(b.dataset.n==t){b.classList.add("pop");good(t);i++;setTimeout(round,1100)}
+   else{b.classList.add("shake");setTimeout(()=>b.classList.remove("shake"),400);beep(0);say("Try again!")}
+  });
+  say(`Find the ${t}!`);
+ }
+ round();
+}
+const an=w=>/^[aeiou]/.test(w)?"an":"a";
+function paint(){
+ const C=[["pink","#ff6fa5"],["orange","#ffa63d"],["blue","#38b6f0"],["purple","#a77bff"],["red","#ff4b5c"],["yellow","#ffcf33"],["green","#5fd3b3"]],q=mix(S);let i=0;
+ function round(){
+  if(i==6){win();return}
+  const t=q[i].n;let cur=null,done=false;
+  M.innerHTML=`<h2>Color the ${t}!</h2><div class="card" id="cv" style="max-width:300px;margin:auto"><svg viewBox="0 0 100 100" fill="#fff" stroke="#ff9ec7" stroke-width="4" stroke-linejoin="round">${P[t]}</svg></div><div class="opts" style="gap:8px">${C.map(c=>`<button class="dot" style="background:${c[1]}"></button>`).join("")}</div>${back()}`;
+  const ds=M.querySelectorAll(".dot");
+  ds.forEach((d,k)=>d.onclick=()=>{ds.forEach(x=>x.classList.remove("sel"));d.classList.add("sel");cur=C[k];say(cur[0])});
+  $("#cv").onclick=()=>{
+   if(done)return;
+   if(!cur){say("Pick a color first!");return}
+   done=true;$("#cv svg").setAttribute("fill",cur[1]);$("#cv").classList.add("pop");beep(1);const c=cur[0];setTimeout(()=>say(`${an(c)} ${c} ${t}!`),250);i++;setTimeout(round,2200);
+  };
+  say(`Color the ${t}!`);
+ }
+ round();
+}
+function oddOne(){
+ let i=0;
+ function round(){
+  if(i==6){win();return}
+  const [a,b]=mix(S),pos=Math.floor(Math.random()*4),arr=[a,a,a,a];arr[pos]=b;
+  M.innerHTML=`<h2>Round ${i+1} of 6</h2><button class="say" id="h">🔊 Find the different one!</button><div class="opts">${arr.map((s,k)=>`<button class="card" style="width:42%" data-o="${k==pos?1:0}">${sh(s.n,a.c)}</button>`).join("")}</div>${back()}`;
+  $("#h").onclick=()=>say("Find the different one!");
+  M.querySelectorAll(".card").forEach(c=>c.onclick=()=>{
+   if(c.dataset.o=="1"){c.classList.add("pop");good(b.n);i++;setTimeout(round,1200)}
+   else{c.classList.add("shake");setTimeout(()=>c.classList.remove("shake"),400);beep(0);say("Try again!")}
+  });
+  say("Find the different one!");
+ }
+ round();
+}
+function hunt(){
+ const q=mix(S).slice(0,3);let i=0;
+ function round(){
+  if(i==3){win();return}
+  const t=q[i].n;let left=3+Math.floor(Math.random()*2);
+  const others=S.filter(s=>s.n!=t).map(s=>s.n),items=mix([...Array(left).fill(t),...Array.from({length:12-left},()=>others[Math.floor(Math.random()*5)])]);
+  M.innerHTML=`<h2>Find all the ${t}s!</h2><button class="say" id="h">🔊 Hear</button> <b id="lf">${left} left</b><div class="grid" style="grid-template-columns:repeat(4,1fr);margin-top:12px">${items.map(n=>`<button class="card" data-n="${n}" style="padding:4px;transform:rotate(${Math.floor(Math.random()*40-20)}deg)">${sh(n,S[Math.floor(Math.random()*6)].c)}</button>`).join("")}</div>${back()}`;
+  $("#h").onclick=()=>say(`Find all the ${t}s!`);
+  M.querySelectorAll(".card").forEach(c=>c.onclick=()=>{
+   if(c.disabled)return;
+   if(c.dataset.n==t){c.disabled=true;c.style.opacity=.3;good(t);left--;$("#lf").textContent=left+" left";if(left==0){i++;setTimeout(round,1100)}}
+   else{c.classList.add("shake");setTimeout(()=>c.classList.remove("shake"),400);beep(0)}
+  });
+  say(`Find all the ${t}s!`);
+ }
+ round();
+}
+M.innerHTML=`<h2>Ready?</h2><button class="big" style="background:#ff6fa5;width:80%;margin-top:20px" id="go"><i>🍭</i>Tap to start!</button>`;
+$("#go").onclick=()=>{unlock();menu()};
+</script>
+</body>
+</html>
